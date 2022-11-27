@@ -105,6 +105,32 @@ async function run() {
             res.send({ isBuyer: user?.role === 'buyer' })
         })
 
+
+        //add service from clientSide
+
+        app.post('/products', async (req, res) => {
+            try {
+                const result = await productCollection.insertOne(req.body);
+                if (result.insertedId) {
+                    res.send({
+                        success: true,
+                        message: `successfully added ${req.body.name}`
+                    })
+                }
+                else {
+                    res.send({
+                        success: false,
+                        error: `could not add the product`
+                    })
+                }
+            } catch (err) {
+                res.send({
+                    success: false,
+                    error: err.message,
+                })
+            }
+        });
+
     }
     catch (err) {
 
