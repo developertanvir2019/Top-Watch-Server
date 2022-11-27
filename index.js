@@ -131,6 +131,23 @@ async function run() {
             }
         });
 
+
+
+        app.get('/:categoryPro', async (req, res) => {
+            try {
+                const categorys = req.params.categoryPro;
+                const query = { category: categorys };
+                const cursor = productCollection.find(query);
+                const products = await cursor.toArray();
+                res.send(products)
+            } catch (err) {
+                res.send({
+                    success: false,
+                    error: err.message,
+                })
+            }
+        })
+
     }
     catch (err) {
 
