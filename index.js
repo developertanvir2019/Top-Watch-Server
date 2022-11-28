@@ -147,6 +147,21 @@ async function run() {
                 })
             }
         })
+        app.get('/my/Product', async (req, res) => {
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+            const cursor = productCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products)
+        });
+
+
+
+
 
     }
     catch (err) {
