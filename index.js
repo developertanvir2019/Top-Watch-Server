@@ -162,6 +162,23 @@ async function run() {
 
 
 
+        //all buyer
+
+        app.get('/all/Buyers', async (req, res) => {
+            const query = { role: 'buyer' };
+            const cursor = usersCollection.find(query);
+            const services = await cursor.toArray()
+            res.send(services);
+        });
+        app.get('/all/seller', async (req, res) => {
+            const query = { role: 'seller' };
+            const cursor = usersCollection.find(query);
+            const services = await cursor.toArray()
+            res.send(services);
+        });
+
+
+
 
     }
     catch (err) {
