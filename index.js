@@ -13,7 +13,7 @@ app.use(express.json());
 const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.czo9kw9.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(url);
 
-//verify jwt
+//verify jwt now
 
 function verifyJWT(req, res, next) {
     const authHeader = req.headers.authorization
