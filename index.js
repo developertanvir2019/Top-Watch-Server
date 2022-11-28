@@ -34,6 +34,7 @@ async function run() {
     try {
         const productCollection = client.db('assignment12').collection('products');
         const usersCollection = client.db('assignment12').collection('users');
+        const bookingCollection = client.db('assignment12').collection('booking');
         //post user 
         app.post('/users', async (req, res) => {
             try {
@@ -177,6 +178,50 @@ async function run() {
             res.send(services);
         });
 
+
+
+
+
+        app.post('/bookings/all', async (req, res) => {
+            const booking = req.body;
+            const query = {
+                productName: booking.productName,
+                email: booking.email
+            }
+
+            const alreadyBooked = await bookingCollection.find(query).toArray()
+
+            if (alreadyBooked.length) {
+                const message = 'You have already booked this product'
+                return res.send({ acknowledged: false, message })
+            }
+            const result = await bookingCollection.insertOne(booking)
+            res.send(result)
+        })
+
+
+        app.get('/bookings/all', async (req, res) => {
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+            const cursor = bookingCollection.find(query);
+            const bookings = await cursor.toArray();
+            res.send(bookings)
+        });
+
+
+
+        //delete product
+
+        app.delete('/myProduct/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await productCollection.deleteOne(query)
+            res.send(result)
+        })
 
 
 
