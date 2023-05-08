@@ -41,7 +41,6 @@ async function run() {
                 const users = req.body;
                 const result = await usersCollection.insertOne(users);
                 res.send(result)
-
             } catch (err) {
                 res.send({
                     success: false,
@@ -49,6 +48,27 @@ async function run() {
                 })
             }
         });
+
+        //delete users
+        app.delete('/users/:id', async (req, res) => {
+            try {
+                const id = req.params.id;
+                const result = await usersCollection.deleteOne({ _id: ObjectId(id) });
+                if (result.deletedCount === 0) {
+                    res.status(404).send({ success: false, error: 'User not found' });
+                } else {
+                    res.send({ success: true });
+                }
+            } catch (err) {
+                res.send({
+                    success: false,
+                    error: err.message,
+                });
+            }
+        });
+
+
+
         //get all users
         app.get('/allUsers', async (req, res) => {
             const query = {};
@@ -84,12 +104,12 @@ async function run() {
 
 
         // admin route protected
-        // app.get('/users/admin/:email', async (req, res) => {
-        //     const email = req.params.email
-        //     const query = { email: email }
-        //     const user = await usersCollection.findOne(query)
-        //     res.send({ isAdmin: user?.role === 'Admin' })
-        // })
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            const user = await usersCollection.findOne(query)
+            res.send({ isAdmin: user?.role === 'Admin' })
+        })
         // seller route protected
         app.get('/users/seller/:email', async (req, res) => {
             const email = req.params.email
@@ -138,6 +158,19 @@ async function run() {
             try {
                 const categorys = req.params.categoryPro;
                 const query = { category: categorys };
+                const cursor = productCollection.find(query);
+                const products = await cursor.toArray();
+                res.send(products)
+            } catch (err) {
+                res.send({
+                    success: false,
+                    error: err.message,
+                })
+            }
+        })
+        app.get('/api/allProducts', async (req, res) => {
+            try {
+                const query = {};
                 const cursor = productCollection.find(query);
                 const products = await cursor.toArray();
                 res.send(products)
@@ -211,6 +244,10 @@ async function run() {
             const bookings = await cursor.toArray();
             res.send(bookings)
         });
+        app.get('/', async (req, res) => {
+            res.send('top watch server running')
+            console.log(process.env.ACCESS_TOKEN);
+        })
 
 
 
